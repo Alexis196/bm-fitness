@@ -1,16 +1,14 @@
 import "./MainLayout.css"
 import Navbar from "../components/Navbar/Navbar"
 import Table from "../components/Table/Table"
-import Footer from "../components/footer/Footer"
 
 function MainLayout() {
   return (
     <div>
         <Navbar/>
         <div className="content">
-        <Table/>
+            <Table/>
         </div>
-        <Footer/>
     </div>
   )
 }
