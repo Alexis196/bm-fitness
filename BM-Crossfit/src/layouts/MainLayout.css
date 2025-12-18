@@ -1,0 +1,8 @@
+.content{
+    width: 90%;
+    height: 84vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
