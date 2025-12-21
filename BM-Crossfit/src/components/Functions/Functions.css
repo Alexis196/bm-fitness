@@ -1,44 +1,47 @@
 /* Functions.css */
 .functions-container {
     margin-bottom: 20px;
-    padding: 15px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.functions-buttons {
+.functions-header {
     display: flex;
-    gap: 15px;
     align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
 }
 
 .btn-add-client {
-    background-color: #2ecc71;
+    padding: 10px 20px;
+    background-color: #007bff;
     color: white;
     border: none;
-    padding: 12px 24px;
     border-radius: 6px;
-    font-size: 16px;
-    font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
 }
 
 .btn-add-client:hover {
-    background-color: #27ae60;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(46, 204, 113, 0.3);
+    background-color: #0056b3;
 }
 
-.btn-add-client:active {
-    transform: translateY(0);
+/* Barra de búsqueda dentro de Functions */
+.functions-header .barra-busqueda {
+    flex: 1;
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    min-width: 300px;
 }
 
-/* Modal Styles */
+.functions-header .buscador-container {
+    margin: 0;
+}
+
+/* Modal styles (mantener igual) */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -50,104 +53,70 @@
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    animation: fadeIn 0.3s ease;
 }
 
 .modal-content {
     background-color: white;
-    border-radius: 12px;
+    border-radius: 8px;
     width: 90%;
-    max-width: 800px;
+    max-width: 500px;
     max-height: 90vh;
     overflow-y: auto;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    animation: slideIn 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 30px;
-    border-bottom: 1px solid #e0e0e0;
-    background-color: #f8f9fa;
-    border-top-left-radius: 12px;
-    border-top-right-radius: 12px;
+    padding: 20px;
+    border-bottom: 1px solid #e9ecef;
 }
 
 .modal-header h2 {
     margin: 0;
-    color: #2c3e50;
-    font-size: 24px;
+    font-size: 1.5rem;
+    color: #333;
 }
 
 .modal-close {
     background: none;
     border: none;
-    font-size: 32px;
-    color: #7f8c8d;
+    font-size: 24px;
     cursor: pointer;
-    width: 40px;
-    height: 40px;
+    color: #666;
+    padding: 0;
+    width: 30px;
+    height: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
-    transition: all 0.3s ease;
+    border-radius: 4px;
+    transition: background-color 0.2s;
 }
 
 .modal-close:hover {
-    background-color: #e74c3c;
-    color: white;
+    background-color: #f8f9fa;
 }
 
 .modal-body {
-    padding: 30px;
-}
-
-/* Animations */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateY(-50px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+    padding: 20px;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-    .modal-content {
-        width: 95%;
-        margin: 10px;
-    }
-    
-    .modal-header {
-        padding: 15px 20px;
-    }
-    
-    .modal-body {
-        padding: 20px;
-    }
-    
-    .functions-buttons {
+    .functions-header {
         flex-direction: column;
         align-items: stretch;
+        gap: 15px;
     }
     
     .btn-add-client {
         width: 100%;
-        justify-content: center;
+    }
+    
+    .functions-header .barra-busqueda {
+        min-width: auto;
+        width: 100%;
     }
 }
