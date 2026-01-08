@@ -11,72 +11,47 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-}
-
-.buscador-input-wrapper {
   position: relative;
-  display: flex;
-  align-items: center;
+  /* Needed for absolute positioning context */
 }
 
-.icono-busqueda {
-  position: absolute;
-  left: 12px;
-  color: #6c757d;
-  pointer-events: none;
-}
-
-.buscador-input {
-  width: 100%;
-  padding: 12px 40px 12px 40px;
-  border: 2px solid #dee2e6;
-  border-radius: 6px;
-  font-size: 16px;
-  transition: all 0.3s ease;
-  outline: none;
-}
-
-.buscador-input:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
-}
-
-.buscador-input::placeholder {
-  color: #adb5bd;
-}
-
-.boton-limpiar-busqueda {
-  position: absolute;
-  right: 12px;
-  background: none;
-  border: none;
-  color: #6c757d;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-}
-
-.boton-limpiar-busqueda:hover {
-  color: #dc3545;
-  background-color: rgba(220, 53, 69, 0.1);
-}
+/* ... existing styles ... */
 
 .info-busqueda {
-  min-height: 24px;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  z-index: 20;
+  margin-top: 5px;
+  pointer-events: none;
+  /* Let clicks pass through when hidden/empty */
+}
+
+/* When there is content (span), give it style */
+.info-busqueda span {
+  display: block;
+  padding: 10px 15px;
+  background-color: #1a2634;
+  /* Dark bg */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  pointer-events: auto;
+  /* Enable clicks on the message itself */
+  backdrop-filter: blur(10px);
 }
 
 .mensaje-ayuda {
-  color: #ffc107;
+  color: #fbbf24;
+  /* Amber-400 */
   font-size: 0.9rem;
-  font-style: italic;
+  font-weight: 500;
 }
 
 .resultados-busqueda {
-  color: #28a745;
+  color: #4ade80;
+  /* Green-400 */
   font-weight: 500;
   font-size: 0.9rem;
 }
@@ -85,16 +60,16 @@
   .barra-busqueda {
     padding: 10px;
   }
-  
+
   .buscador-input {
     padding: 10px 36px 10px 36px;
     font-size: 14px;
   }
-  
+
   .buscador-input::placeholder {
     font-size: 14px;
   }
-  
+
   .resultados-busqueda,
   .mensaje-ayuda {
     font-size: 0.85rem;

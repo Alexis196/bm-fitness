@@ -2,163 +2,50 @@
 .buttons-container {
   display: flex;
   gap: 6px;
+  /* Estilos para filas según estado */
+  /* (Removed inline editing styles) */
   flex-wrap: wrap;
 }
 
 .btn {
-  padding: 6px 12px;
+  padding: 8px;
   border: none;
-  border-radius: 4px;
-  font-size: 12px;
+  border-radius: 8px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  min-width: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 40px;
 }
 
-.btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.btn:active {
-  transform: translateY(0);
-}
-
+/* ... (colors remain same but can be tweaked if needed, keeping simple matching for now) ... */
 /* Botones principales */
 .btn-edit {
-  background-color: #3498db;
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
   color: white;
-}
-
-.btn-edit:hover {
-  background-color: #2980b9;
 }
 
 .btn-extend {
-  background-color: #2ecc71;
+  background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
   color: white;
-}
-
-.btn-extend:hover {
-  background-color: #27ae60;
+  padding: 8px 12px;
+  /* A bit wider for text */
 }
 
 .btn-delete {
-  background-color: #e74c3c;
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
   color: white;
-}
-
-.btn-delete:hover {
-  background-color: #c0392b;
-}
-
-/* Estilos para el formulario de edición */
-.edit-form-container {
-  background-color: #f8f9fa;
-  border: 1px solid #dee2e6;
-  border-radius: 6px;
-  padding: 10px;
-  margin: -5px;
-  min-width: 300px;
-}
-
-.edit-form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
-.edit-form-grid .edit-input,
-.edit-form-grid .edit-select {
-  grid-column: span 1;
-}
-
-/* Si quieres que algunos campos ocupen el ancho completo */
-.edit-form-grid .edit-input:nth-child(5),
-.edit-form-grid .edit-input:nth-child(6) {
-  grid-column: span 2;
-}
-
-.edit-input,
-.edit-select {
-  width: 100%;
-  padding: 6px 8px;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
-  font-size: 13px;
-  transition: all 0.2s ease;
-}
-
-.edit-input:focus,
-.edit-select:focus {
-  outline: none;
-  border-color: #3498db;
-  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
-}
-
-.edit-select {
-  background-color: white;
-  cursor: pointer;
-}
-
-.edit-buttons {
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-}
-
-.btn-save {
-  background-color: #2ecc71;
-  color: white;
-  padding: 6px 16px;
-}
-
-.btn-save:hover {
-  background-color: #27ae60;
-}
-
-.btn-cancel {
-  background-color: #95a5a6;
-  color: white;
-  padding: 6px 16px;
-}
-
-.btn-cancel:hover {
-  background-color: #7f8c8d;
 }
 
 /* Responsive */
 @media (max-width: 1200px) {
   .buttons-container {
-    flex-direction: column;
-  }
-  
-  .btn {
-    width: 100%;
-    margin-bottom: 4px;
-  }
-}
-
-@media (max-width: 768px) {
-  .edit-form-container {
-    min-width: 250px;
-  }
-  
-  .edit-form-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .edit-form-grid .edit-input,
-  .edit-form-grid .edit-select {
-    grid-column: span 1;
-  }
-  
-  .edit-form-grid .edit-input:nth-child(5),
-  .edit-form-grid .edit-input:nth-child(6) {
-    grid-column: span 1;
+    flex-direction: row;
+    /* Keep row even on smaller screens if possible, or wrap */
+    flex-wrap: wrap;
   }
 }

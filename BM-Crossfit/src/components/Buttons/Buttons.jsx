@@ -1,80 +1,36 @@
 // Buttons.js actualizado
 import React, { useState, useContext } from 'react'
+import { createPortal } from 'react-dom'
 import { ClientContext } from '../../context/ClientContext'
 import './Buttons.css'
+import { FaEdit, FaTrash } from 'react-icons/fa'
+import EditClient from '../EditClient/EditClient'
 
 const Buttons = ({ client, onClientUpdated }) => {
     const {
-        actualizarCliente,
         eliminarCliente,
         extenderSuscripcion,
+        extenderDesdeUltimaFecha,
         loading
     } = useContext(ClientContext)
 
-    const [isEditing, setIsEditing] = useState(false)
-    const [editForm, setEditForm] = useState({
-        nombre: client.nombre || '',
-        apellido: client.apellido || '',
-        dni: client.dni || '',
-        disciplina: client.disciplina || '',
-        fechaInicio: client.fechaInicio || '',
-        fechaFin: client.fechaFin || ''
-    })
+    const [showEditModal, setShowEditModal] = useState(false)
+    const [showDeleteModal, setShowDeleteModal] = useState(false)
 
-    // Función auxiliar para formatear fecha
-    const formatDateForInput = (dateString) => {
-        if (!dateString) return ''
-        try {
-            const date = new Date(dateString)
-            if (isNaN(date.getTime())) return ''
-            return date.toISOString().split('T')[0]
-        } catch {
-            return ''
-        }
-    }
-
-    // Manejar cambios en el formulario
-    const handleEditChange = (e) => {
-        const { name, value } = e.target
-        setEditForm(prev => ({
-            ...prev,
-            [name]: value
-        }))
-    }
-
-    // Iniciar edición
+    // Iniciar edición (abrir modal)
     const handleStartEdit = () => {
-        setEditForm({
-            nombre: client.nombre || '',
-            apellido: client.apellido || '',
-            dni: client.dni || '',
-            disciplina: client.disciplina || '',
-            fechaInicio: formatDateForInput(client.fechaInicio),
-            fechaFin: formatDateForInput(client.fechaFin)
-        })
-        setIsEditing(true)
+        setShowEditModal(true)
     }
 
-    // Cancelar edición
-    const handleCancelEdit = () => {
-        setIsEditing(false)
+    // Cerrar modal
+    const handleCloseModal = () => {
+        setShowEditModal(false)
     }
 
-    // Guardar cambios
-    const handleSaveEdit = async () => {
-        if (!editForm.nombre || !editForm.apellido || !editForm.dni) {
-            alert('Nombre, apellido y DNI son obligatorios')
-            return
-        }
-
-        const resultado = await actualizarCliente(client.id, editForm)
-
-        if (resultado.success) {
-            setIsEditing(false)
-            if (onClientUpdated) onClientUpdated()
-        } else {
-            alert(`Error: ${resultado.message}`)
-        }
+    // Callback éxito
+    const handleEditSuccess = () => {
+        if (onClientUpdated) onClientUpdated()
+        setShowEditModal(false)
     }
 
     // En Buttons.js - actualizar handleExtendMonth
@@ -93,150 +49,117 @@ const Buttons = ({ client, onClientUpdated }) => {
         }
     }
 
-    // O si prefieres extender desde la última fecha:
-    const handleExtendFromLastDate = async () => {
-        if (!confirm(`¿Extender un mes la suscripción de ${client.nombre} ${client.apellido} desde la última fecha de vencimiento?`)) {
-            return
-        }
-
-        const resultado = await extenderDesdeUltimaFecha(client.id, 1)
-
-        if (resultado.success) {
-            alert(`✅ Suscripción extendida 1 mes\n📅 Nueva fecha de vencimiento: ${resultado.nuevaFechaFin}`)
-            if (onClientUpdated) onClientUpdated()
-        } else {
-            alert(`❌ Error: ${resultado.message}`)
-        }
-    }
-
     // Eliminar cliente
+    // Eliminar cliente (Lógica ejecutada tras confirmar en modal)
     const handleDelete = async () => {
-        if (!confirm(`¿Está seguro de eliminar a ${client.nombre} ${client.apellido}? Esta acción no se puede deshacer.`)) {
-            return
-        }
-
         const resultado = await eliminarCliente(client.id)
 
         if (resultado.success) {
-            alert('Cliente eliminado correctamente')
+            // alert('Cliente eliminado correctamente') // Optional: Toast notification instead?
+            setShowDeleteModal(false)
             if (onClientUpdated) onClientUpdated()
         } else {
             alert(`Error: ${resultado.message}`)
         }
     }
 
-    // Si está en modo edición
-    if (isEditing) {
-        return (
-            <div className="edit-form-container">
-                <div className="edit-form-grid">
-                    <input
-                        type="text"
-                        name="nombre"
-                        value={editForm.nombre}
-                        onChange={handleEditChange}
-                        className="edit-input"
-                        placeholder="Nombre"
-                        required
-                        disabled={loading}
-                    />
-                    <input
-                        type="text"
-                        name="apellido"
-                        value={editForm.apellido}
-                        onChange={handleEditChange}
-                        className="edit-input"
-                        placeholder="Apellido"
-                        required
-                        disabled={loading}
-                    />
-                    <input
-                        type="text"
-                        name="dni"
-                        value={editForm.dni}
-                        onChange={handleEditChange}
-                        className="edit-input"
-                        placeholder="DNI"
-                        required
-                        disabled={loading}
-                    />
-                    <select
-                        name="disciplina"
-                        value={editForm.disciplina}
-                        onChange={handleEditChange}
-                        className="edit-select"
-                        disabled={loading}
-                    >
-                        <option value="">Disciplina</option>
-                        <option value="Musculación">Musculación</option>
-                        <option value="Crossfit">Crossfit</option>
-                        <option value="Funcional">Funcional</option>
-                        <option value="Yoga">Yoga</option>
-                        <option value="Pilates">Pilates</option>
-                    </select>
-                    <input
-                        type="date"
-                        name="fechaInicio"
-                        value={editForm.fechaInicio}
-                        onChange={handleEditChange}
-                        className="edit-input"
-                        disabled={loading}
-                    />
-                    <input
-                        type="date"
-                        name="fechaFin"
-                        value={editForm.fechaFin}
-                        onChange={handleEditChange}
-                        className="edit-input"
-                        disabled={loading}
-                    />
-                </div>
-                <div className="edit-buttons">
-                    <button
-                        className="btn btn-save"
-                        onClick={handleSaveEdit}
-                        disabled={loading}
-                    >
-                        {loading ? 'Guardando...' : 'Guardar'}
-                    </button>
-                    <button
-                        className="btn btn-cancel"
-                        onClick={handleCancelEdit}
-                        disabled={loading}
-                    >
-                        Cancelar
-                    </button>
-                </div>
-            </div>
-        )
-    }
 
-    // Modo normal
     return (
-        <div className="buttons-container">
-            <button
-                className="btn btn-edit"
-                onClick={handleStartEdit}
-                disabled={loading}
-            >
-                Editar
-            </button>
-            <button
-                className="btn btn-extend"
-                onClick={handleExtendMonth}
-                disabled={loading}
-                title="Extender 1 mes (fecha inicio = hoy, fin = hoy + 30 días)"
-            >
-                + 1 Mes
-            </button>
-            <button
-                className="btn btn-delete"
-                onClick={handleDelete}
-                disabled={loading}
-            >
-                Eliminar
-            </button>
-        </div>
+        <>
+            <div className="buttons-container">
+                <button
+                    className="btn btn-edit"
+                    onClick={handleStartEdit}
+                    disabled={loading}
+                    title="Editar cliente"
+                >
+                    <i className="btn-icon"><FaEdit /></i>
+                </button>
+                <button
+                    className="btn btn-extend"
+                    onClick={handleExtendMonth}
+                    disabled={loading}
+                    title="Extender 1 mes"
+                >
+                    <i className="btn-icon">+1 Mes</i>
+                </button>
+                <button
+                    className="btn btn-delete"
+                    onClick={() => setShowDeleteModal(true)}
+                    disabled={loading}
+                    title="Eliminar cliente"
+                >
+                    <i className="btn-icon"><FaTrash /></i>
+                </button>
+            </div>
+
+            {/* Modal de edición */}
+            {showEditModal && createPortal(
+                <div className="modal-overlay" onClick={handleCloseModal}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <h2>{client.nombre} {client.apellido}</h2>
+                            <button
+                                className="modal-close"
+                                onClick={handleCloseModal}
+                            >
+                                &times;
+                            </button>
+                        </div>
+                        <div className="modal-body">
+                            <EditClient
+                                client={client}
+                                onSuccess={handleEditSuccess}
+                                onClose={handleCloseModal}
+                            />
+                        </div>
+                    </div>
+                </div>,
+                document.body
+            )}
+
+            {/* Modal de Confirmación de Eliminación */}
+            {showDeleteModal && createPortal(
+                <div className="modal-overlay" onClick={() => setShowDeleteModal(false)}>
+                    <div className="modal-content" style={{ maxWidth: '400px' }} onClick={(e) => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <h2>Eliminar Cliente</h2>
+                            <button
+                                className="modal-close"
+                                onClick={() => setShowDeleteModal(false)}
+                            >
+                                &times;
+                            </button>
+                        </div>
+                        <div className="modal-body">
+                            <p style={{ color: '#cbd5e0', marginBottom: '20px', fontSize: '15px' }}>
+                                ¿Estás seguro de que quieres eliminar a <strong>{client.nombre} {client.apellido}</strong>?
+                                <br />
+                                <span style={{ fontSize: '13px', color: '#fc8181', marginTop: '10px', display: 'block' }}>
+                                    Esta acción no se puede deshacer.
+                                </span>
+                            </p>
+                            <div className="form-actions" style={{ justifyContent: 'flex-end', marginTop: '0' }}>
+                                <button
+                                    className="btn-submit"
+                                    onClick={() => setShowDeleteModal(false)}
+                                    style={{ background: '#4a5568', boxShadow: 'none' }}
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    className="btn-cancel"
+                                    onClick={handleDelete}
+                                >
+                                    <FaTrash size={14} /> Eliminar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>,
+                document.body
+            )}
+        </>
     )
 }
 

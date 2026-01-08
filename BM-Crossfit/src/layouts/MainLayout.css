@@ -1,9 +1,13 @@
-.content{
+.content {
     width: 90%;
-    height: 84vh;
+    min-height: 84vh;
+    /* Use min-height to allow growth */
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    /* justify-content: center; REMOVED to prevent jumping */
     margin: 0 auto;
+    padding-top: 20px;
+    /* Add some top padding */
+    padding-bottom: 20px;
 }

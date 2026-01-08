@@ -6,18 +6,23 @@ import Buttons from '../Buttons/Buttons'
 import { useContext, useEffect, useMemo, useState } from "react"
 import { ClientContext } from "../../context/ClientContext"
 
-const Table = ({ 
-  terminoBusqueda, 
-  estaBuscando, 
-  clientesFiltrados 
+const Table = ({
+  terminoBusqueda,
+  estaBuscando,
+  clientesFiltrados
 }) => {
-  const { clients, getClients } = useContext(ClientContext)
+  const { clients, getClients, getEstadoSuscripcion, loading } = useContext(ClientContext)
   const [paginaActual, setPaginaActual] = useState(1)
   const [clientesPorPagina, setClientesPorPagina] = useState(10)
 
   useEffect(() => {
     getClients()
   }, [])
+
+  // Resetear página al buscar
+  useEffect(() => {
+    setPaginaActual(1)
+  }, [terminoBusqueda, estaBuscando])
 
   // Obtener los clientes a mostrar
   const clientesAMostrar = useMemo(() => {
@@ -40,17 +45,7 @@ const Table = ({
     }
   }
 
-  const getEstadoSuscripcion = (fechaFinString) => {
-    if (!fechaFinString) return 'normal'
-    const hoy = new Date()
-    const fechaFin = new Date(fechaFinString)
-    if (isNaN(fechaFin.getTime())) return 'normal'
-    const diffTime = fechaFin - hoy
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-    if (diffDays < 0) return 'vencido'
-    if (diffDays <= 5) return 'por-vencer'
-    return 'normal'
-  }
+
 
   const ordenarClientes = useMemo(() => {
     return [...clientesAMostrar].sort((a, b) => {
@@ -84,7 +79,7 @@ const Table = ({
   }
 
   const getClaseEstado = (estado) => {
-    switch(estado) {
+    switch (estado) {
       case 'vencido': return 'fila-vencida'
       case 'por-vencer': return 'fila-por-vencer'
       default: return ''
@@ -125,7 +120,7 @@ const Table = ({
     const partes = textoStr.split(new RegExp(`(${terminoBusqueda})`, 'gi'))
     return (
       <span>
-        {partes.map((parte, i) => 
+        {partes.map((parte, i) =>
           parte.toLowerCase() === terminoLower.toLowerCase() ? (
             <mark key={i} className="resaltado-busqueda">{parte}</mark>
           ) : (
@@ -143,8 +138,8 @@ const Table = ({
         <div className="controles-paginacion">
           <div className="selector-registros">
             <label htmlFor="clientesPorPagina">Mostrar: </label>
-            <select 
-              id="clientesPorPagina" 
+            <select
+              id="clientesPorPagina"
               value={clientesPorPagina}
               onChange={handleClientesPorPaginaChange}
             >
@@ -156,7 +151,7 @@ const Table = ({
             </select>
             <span>registros por página</span>
           </div>
-          
+
           <div className="info-paginacion">
             <span>
               Mostrando {indicePrimerCliente + 1} - {Math.min(indiceUltimoCliente, ordenarClientes.length)} de {ordenarClientes.length} cliente{ordenarClientes.length !== 1 ? 's' : ''}
@@ -166,83 +161,158 @@ const Table = ({
         </div>
       </div>
 
-      <table className='table'>
-        <thead>
-          <Tr>
-            <Th>#</Th>
-            <Th>Nombre</Th>
-            <Th>Apellido</Th>
-            <Th>DNI</Th>
-            <Th>Disciplina</Th>
-            <Th>Inicio</Th>
-            <Th>Fin</Th>
-            <Th>Estado</Th>
-            <Th>Acciones</Th>
-          </Tr>
-        </thead>
+      {/* VISTA ESCRITORIO (> 920px) */}
+      <div className="desktop-table-view">
+        <table className='table'>
+          <thead>
+            <Tr>
+              <Th>#</Th>
+              <Th>Nombre</Th>
+              <Th>Apellido</Th>
+              <Th>DNI</Th>
+              <Th>Disciplina</Th>
+              <Th>Inicio</Th>
+              <Th>Fin</Th>
+              <Th>Estado</Th>
+              <Th>Acciones</Th>
+            </Tr>
+          </thead>
 
-        <tbody>
-          {clientesActuales.length > 0 ? (
-            clientesActuales.map((client, index) => {
-              const indiceGlobal = indicePrimerCliente + index
-              const estado = getEstadoSuscripcion(client.fechaFin)
-              const claseFila = getClaseEstado(estado)
-              
-              return (
-                <Tr key={client.id} className={claseFila}>
-                  <Td>{indiceGlobal + 1}</Td>
-                  <Td>{resaltarTexto(client.nombre)}</Td>
-                  <Td>{resaltarTexto(client.apellido)}</Td>
-                  <Td>{resaltarTexto(client.dni) || 'N/A'}</Td>
-                  <Td>{resaltarTexto(client.disciplina) || 'Sin especificar'}</Td>
-                  <Td>{formatearFecha(client.fechaInicio)}</Td>
-                  <Td>{formatearFecha(client.fechaFin)}</Td>
-                  <Td>
-                    <span className={`badge-estado estado-${estado}`}>
-                      {estado === 'vencido' ? 'Vencido' : 
-                       estado === 'por-vencer' ? 'Por vencer' : 'Activo'}
-                    </span>
-                  </Td>
-                  <Td>
-                    <Buttons 
-                      client={client}
-                      onClientUpdated={getClients}
-                    />
-                  </Td>
-                </Tr>
-              )
-            })
-          ) : (
-            <tr>
-              <td colSpan="9" className="sin-resultados">
-                {estaBuscando && terminoBusqueda && terminoBusqueda.length >= 3 
-                  ? `No se encontraron resultados para "${terminoBusqueda}"`
-                  : "No hay clientes registrados"}
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+          <tbody>
+            {loading ? (
+              <tr>
+                <td colSpan="9">
+                  <div className="loading-container">
+                    <div className="spinner"></div>
+                    {/* Optional: Add text if desired, hidden by CSS currently */}
+                  </div>
+                </td>
+              </tr>
+            ) : clientesActuales.length > 0 ? (
+              clientesActuales.map((client, index) => {
+                const indiceGlobal = indicePrimerCliente + index
+                const estado = getEstadoSuscripcion(client.fechaFin)
+                const claseFila = getClaseEstado(estado)
+
+                return (
+                  <Tr key={client.id} className={claseFila}>
+                    <Td>{indiceGlobal + 1}</Td>
+                    <Td>{resaltarTexto(client.nombre)}</Td>
+                    <Td>{resaltarTexto(client.apellido)}</Td>
+                    <Td>{resaltarTexto(client.dni) || 'N/A'}</Td>
+                    <Td>{resaltarTexto(client.disciplina) || 'Sin especificar'}</Td>
+                    <Td>{formatearFecha(client.fechaInicio)}</Td>
+                    <Td>{formatearFecha(client.fechaFin)}</Td>
+                    <Td>
+                      <span className={`badge-estado estado-${estado}`}>
+                        {estado === 'vencido' ? 'Vencido' :
+                          estado === 'por-vencer' ? 'Por vencer' : 'Activo'}
+                      </span>
+                    </Td>
+                    <Td>
+                      <Buttons
+                        client={client}
+                        onClientUpdated={getClients}
+                      />
+                    </Td>
+                  </Tr>
+                )
+              })
+            ) : (
+              <tr>
+                <td colSpan="9" className="sin-resultados">
+                  {estaBuscando && terminoBusqueda && terminoBusqueda.length >= 3
+                    ? `No se encontraron resultados para "${terminoBusqueda}"`
+                    : "No hay clientes registrados"}
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* VISTA MÓVIL/TARJETAS (< 920px) */}
+      <div className="mobile-card-view">
+        {loading ? (
+          <div className="loading-container">
+            <div className="spinner"></div>
+          </div>
+        ) : clientesActuales.length > 0 ? (
+          clientesActuales.map((client, index) => {
+            const indiceGlobal = indicePrimerCliente + index
+            const estado = getEstadoSuscripcion(client.fechaFin)
+            const claseEstado = estado === 'vencido' ? 'card-vencida' :
+              estado === 'por-vencer' ? 'card-por-vencer' : ''
+
+            return (
+              <div key={client.id} className={`client-card ${claseEstado}`}>
+                <div className="card-header">
+                  <div className="card-title">
+                    <span className="card-index">#{indiceGlobal + 1}</span>
+                    <h3>{resaltarTexto(client.nombre)} {resaltarTexto(client.apellido)}</h3>
+                  </div>
+                  <span className={`badge-estado estado-${estado}`}>
+                    {estado === 'vencido' ? 'Vencido' :
+                      estado === 'por-vencer' ? 'Por vencer' : 'Activo'}
+                  </span>
+                </div>
+
+                <div className="card-body">
+                  <div className="card-row">
+                    <span className="card-label">DNI:</span>
+                    <span className="card-value">{resaltarTexto(client.dni) || 'N/A'}</span>
+                  </div>
+                  <div className="card-row">
+                    <span className="card-label">Disciplina:</span>
+                    <span className="card-value">{resaltarTexto(client.disciplina) || 'Sin especificar'}</span>
+                  </div>
+                  <div className="card-row">
+                    <span className="card-label">Inicio:</span>
+                    <span className="card-value">{formatearFecha(client.fechaInicio)}</span>
+                  </div>
+                  <div className="card-row">
+                    <span className="card-label">Fin:</span>
+                    <span className="card-value">{formatearFecha(client.fechaFin)}</span>
+                  </div>
+                </div>
+
+                <div className="card-actions">
+                  <Buttons
+                    client={client}
+                    onClientUpdated={getClients}
+                  />
+                </div>
+              </div>
+            )
+          })
+        ) : (
+          <div className="sin-resultados">
+            {estaBuscando && terminoBusqueda && terminoBusqueda.length >= 3
+              ? `No se encontraron resultados para "${terminoBusqueda}"`
+              : "No hay clientes registrados"}
+          </div>
+        )}
+      </div>
 
       {totalPaginas > 1 && (
         <div className="paginacion-inferior">
           <div className="controles-paginacion">
             <div className="botones-paginacion">
-              <button 
+              <button
                 className="btn-paginacion"
                 onClick={() => cambiarPagina(1)}
                 disabled={paginaActual === 1}
               >
                 ««
               </button>
-              <button 
+              <button
                 className="btn-paginacion"
                 onClick={() => cambiarPagina(paginaActual - 1)}
                 disabled={paginaActual === 1}
               >
                 «
               </button>
-              
+
               {generarNumerosPagina().map((numero, index) => (
                 <button
                   key={index}
@@ -253,15 +323,15 @@ const Table = ({
                   {numero}
                 </button>
               ))}
-              
-              <button 
+
+              <button
                 className="btn-paginacion"
                 onClick={() => cambiarPagina(paginaActual + 1)}
                 disabled={paginaActual === totalPaginas}
               >
                 »
               </button>
-              <button 
+              <button
                 className="btn-paginacion"
                 onClick={() => cambiarPagina(totalPaginas)}
                 disabled={paginaActual === totalPaginas}
@@ -269,7 +339,7 @@ const Table = ({
                 »»
               </button>
             </div>
-            
+
             <div className="info-pagina-actual">
               <span>Página {paginaActual} de {totalPaginas}</span>
             </div>

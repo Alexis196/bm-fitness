@@ -3,6 +3,7 @@ import React, { useState, useContext, useCallback } from 'react'
 import { ClientContext } from '../../context/ClientContext'
 import AddClient from '../AddClient/AddClient'
 import Search from '../Search/Search'
+import { FaUserPlus } from "react-icons/fa"
 import './Functions.css'
 
 const Functions = ({ onSearchUpdate }) => {
@@ -17,7 +18,7 @@ const Functions = ({ onSearchUpdate }) => {
             setEstaBuscando(false)
             setClientesFiltrados([])
             setTerminoBusqueda("")
-            
+
             // Notificar al padre que se limpió la búsqueda
             if (onSearchUpdate) {
                 onSearchUpdate({
@@ -28,25 +29,25 @@ const Functions = ({ onSearchUpdate }) => {
             }
             return
         }
-        
+
         const terminoLower = termino.toLowerCase().trim()
-        
+
         // Filtrar clientes
         const filtrados = clients.filter(cliente => {
             if (cliente.nombre?.toLowerCase().includes(terminoLower)) return true
             if (cliente.apellido?.toLowerCase().includes(terminoLower)) return true
             if (cliente.dni?.toString().includes(termino)) return true
             if (cliente.disciplina?.toLowerCase().includes(terminoLower)) return true
-            
+
             const nombreCompleto = `${cliente.nombre || ''} ${cliente.apellido || ''}`.toLowerCase()
             return nombreCompleto.includes(terminoLower)
         })
-        
+
         // Actualizar estados locales
         setTerminoBusqueda(termino)
         setClientesFiltrados(filtrados)
         setEstaBuscando(true)
-        
+
         // Notificar al padre sobre los resultados
         if (onSearchUpdate) {
             onSearchUpdate({
@@ -61,7 +62,7 @@ const Functions = ({ onSearchUpdate }) => {
         setTerminoBusqueda("")
         setEstaBuscando(false)
         setClientesFiltrados([])
-        
+
         // Notificar al padre que se limpió la búsqueda
         if (onSearchUpdate) {
             onSearchUpdate({
@@ -88,14 +89,15 @@ const Functions = ({ onSearchUpdate }) => {
     return (
         <div className="functions-container">
             <div className="functions-header">
-                <button 
+                <button
                     className="btn-add-client"
                     onClick={handleOpenModal}
+                    title="Agregar Nuevo Cliente"
                 >
-                    + Agregar Cliente
+                    <FaUserPlus size={24} />
                 </button>
 
-                <Search 
+                <Search
                     onBuscar={buscarClientes}
                     onLimpiar={limpiarBusqueda}
                     estaBuscando={estaBuscando}
@@ -108,7 +110,7 @@ const Functions = ({ onSearchUpdate }) => {
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                         <div className="modal-header">
                             <h2>Agregar Nuevo Cliente</h2>
-                            <button 
+                            <button
                                 className="modal-close"
                                 onClick={handleCloseModal}
                             >
@@ -116,7 +118,7 @@ const Functions = ({ onSearchUpdate }) => {
                             </button>
                         </div>
                         <div className="modal-body">
-                            <AddClient 
+                            <AddClient
                                 onSuccess={handleAddClient}
                                 onClose={handleCloseModal}
                             />

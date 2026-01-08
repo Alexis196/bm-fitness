@@ -1,12 +1,12 @@
 import { createContext, useState } from "react"
-import { 
-  collection, 
-  getDocs, 
-  addDoc, 
-  updateDoc, 
-  deleteDoc, 
+import {
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
   doc,
-  Timestamp 
+  Timestamp
 } from "firebase/firestore"
 import { db } from "../services/DataBase/database"
 
@@ -31,9 +31,9 @@ export const ClientProvider = ({ children }) => {
           id: doc.id,
           ...docData,
           // Convertir Timestamps de Firebase a string ISO
-          fechaInicio: docData.fechaInicio ? 
+          fechaInicio: docData.fechaInicio ?
             docData.fechaInicio.toDate().toISOString().split('T')[0] : '',
-          fechaFin: docData.fechaFin ? 
+          fechaFin: docData.fechaFin ?
             docData.fechaFin.toDate().toISOString().split('T')[0] : ''
         }
       })
@@ -61,15 +61,15 @@ export const ClientProvider = ({ children }) => {
       }
 
       // Si no hay fecha de inicio, usar hoy
-      const fechaInicio = nuevoCliente.fechaInicio 
+      const fechaInicio = nuevoCliente.fechaInicio
         ? new Date(nuevoCliente.fechaInicio)
         : new Date()
-      
+
       // Si no hay fecha de fin, calcular 30 días después de la fecha de inicio
-      let fechaFin = nuevoCliente.fechaFin 
+      let fechaFin = nuevoCliente.fechaFin
         ? new Date(nuevoCliente.fechaFin)
         : new Date(fechaInicio)
-      
+
       if (!nuevoCliente.fechaFin) {
         fechaFin.setDate(fechaFin.getDate() + 30)
       }
@@ -91,7 +91,7 @@ export const ClientProvider = ({ children }) => {
 
       // Agregar a Firebase
       const docRef = await addDoc(collection(db, "usuarios"), clienteFormateado)
-      
+
       // Crear cliente con ID para estado local (con fechas como string)
       const clienteConId = {
         id: docRef.id,
@@ -107,7 +107,7 @@ export const ClientProvider = ({ children }) => {
 
       // Actualizar estado local
       setClients(prev => [...prev, clienteConId])
-      
+
       return {
         success: true,
         message: "Cliente agregado exitosamente",
@@ -117,7 +117,7 @@ export const ClientProvider = ({ children }) => {
     } catch (error) {
       console.error("Error al agregar cliente:", error)
       setError(error.message || "Error al agregar el cliente")
-      
+
       return {
         success: false,
         message: error.message || "Error al agregar el cliente"
@@ -143,12 +143,12 @@ export const ClientProvider = ({ children }) => {
 
       // Preparar datos para Firebase
       const datosParaFirebase = { ...datosActualizados }
-      
+
       // Convertir fechas a Timestamp si existen
       if (datosParaFirebase.fechaInicio && typeof datosParaFirebase.fechaInicio === 'string') {
         datosParaFirebase.fechaInicio = Timestamp.fromDate(new Date(datosParaFirebase.fechaInicio))
       }
-      
+
       if (datosParaFirebase.fechaFin && typeof datosParaFirebase.fechaFin === 'string') {
         datosParaFirebase.fechaFin = Timestamp.fromDate(new Date(datosParaFirebase.fechaFin))
       }
@@ -160,28 +160,28 @@ export const ClientProvider = ({ children }) => {
       await updateDoc(clienteRef, datosParaFirebase)
 
       // Actualizar estado local
-      setClients(prev => prev.map(cliente => 
-        cliente.id === id 
-          ? { 
-              ...cliente, 
-              ...datosActualizados,
-              id: cliente.id
-            } 
+      setClients(prev => prev.map(cliente =>
+        cliente.id === id
+          ? {
+            ...cliente,
+            ...datosActualizados,
+            id: cliente.id
+          }
           : cliente
       ))
-      
-      return { 
-        success: true, 
+
+      return {
+        success: true,
         message: "Cliente actualizado correctamente",
         clienteActualizado: datosActualizados
       }
     } catch (error) {
       console.error("Error al actualizar cliente:", error)
       setError(error.message || "Error al actualizar el cliente")
-      
-      return { 
-        success: false, 
-        message: error.message || "Error al actualizar el cliente" 
+
+      return {
+        success: false,
+        message: error.message || "Error al actualizar el cliente"
       }
     } finally {
       setLoading(false)
@@ -202,18 +202,18 @@ export const ClientProvider = ({ children }) => {
       await deleteDoc(clienteRef)
 
       setClients(prev => prev.filter(cliente => cliente.id !== id))
-      
-      return { 
-        success: true, 
-        message: "Cliente eliminado correctamente" 
+
+      return {
+        success: true,
+        message: "Cliente eliminado correctamente"
       }
     } catch (error) {
       console.error("Error al eliminar cliente:", error)
       setError(error.message || "Error al eliminar el cliente")
-      
-      return { 
-        success: false, 
-        message: error.message || "Error al eliminar el cliente" 
+
+      return {
+        success: false,
+        message: error.message || "Error al eliminar el cliente"
       }
     } finally {
       setLoading(false)
@@ -228,9 +228,9 @@ export const ClientProvider = ({ children }) => {
   // Función para buscar clientes por nombre, apellido o DNI
   const buscarClientes = (termino) => {
     if (!termino) return clients
-    
+
     const terminoLower = termino.toLowerCase()
-    return clients.filter(cliente => 
+    return clients.filter(cliente =>
       cliente.nombre?.toLowerCase().includes(terminoLower) ||
       cliente.apellido?.toLowerCase().includes(terminoLower) ||
       cliente.dni?.includes(termino)
@@ -251,7 +251,7 @@ export const ClientProvider = ({ children }) => {
       // Obtener la fecha actual (hoy)
       const hoy = new Date()
       const hoyString = hoy.toISOString().split('T')[0]
-      
+
       // Calcular nueva fecha de fin: hoy + (meses * 30 días)
       const nuevaFechaFin = new Date(hoy)
       nuevaFechaFin.setDate(hoy.getDate() + (meses * 30))
@@ -265,7 +265,7 @@ export const ClientProvider = ({ children }) => {
 
       // Referencia al documento
       const clienteRef = doc(db, "usuarios", id)
-      
+
       // Actualizar en Firebase con Timestamps
       await updateDoc(clienteRef, {
         fechaInicio: Timestamp.fromDate(hoy),
@@ -274,18 +274,18 @@ export const ClientProvider = ({ children }) => {
       })
 
       // Actualizar estado local
-      setClients(prev => prev.map(cliente => 
-        cliente.id === id 
-          ? { 
-              ...cliente, 
-              fechaInicio: hoyString,
-              fechaFin: nuevaFechaFinString
-            } 
+      setClients(prev => prev.map(cliente =>
+        cliente.id === id
+          ? {
+            ...cliente,
+            fechaInicio: hoyString,
+            fechaFin: nuevaFechaFinString
+          }
           : cliente
       ))
-      
-      return { 
-        success: true, 
+
+      return {
+        success: true,
         message: `Suscripción extendida ${meses} mes(es) correctamente`,
         nuevaFechaInicio: hoyString,
         nuevaFechaFin: nuevaFechaFinString
@@ -293,10 +293,10 @@ export const ClientProvider = ({ children }) => {
     } catch (error) {
       console.error("Error al extender suscripción:", error)
       setError(error.message || "Error al extender la suscripción")
-      
-      return { 
-        success: false, 
-        message: error.message || "Error al extender la suscripción" 
+
+      return {
+        success: false,
+        message: error.message || "Error al extender la suscripción"
       }
     } finally {
       setLoading(false)
@@ -315,10 +315,10 @@ export const ClientProvider = ({ children }) => {
       }
 
       // Usar la fecha de fin actual o hoy si no existe
-      const fechaBase = cliente.fechaFin 
+      const fechaBase = cliente.fechaFin
         ? new Date(cliente.fechaFin)
         : new Date()
-      
+
       // Calcular nueva fecha de fin: fecha base + (meses * 30 días)
       const nuevaFechaFin = new Date(fechaBase)
       nuevaFechaFin.setDate(fechaBase.getDate() + (meses * 30))
@@ -331,7 +331,7 @@ export const ClientProvider = ({ children }) => {
 
       // Referencia al documento
       const clienteRef = doc(db, "usuarios", id)
-      
+
       // Actualizar en Firebase
       await updateDoc(clienteRef, {
         fechaFin: Timestamp.fromDate(nuevaFechaFin),
@@ -339,31 +339,57 @@ export const ClientProvider = ({ children }) => {
       })
 
       // Actualizar estado local
-      setClients(prev => prev.map(cliente => 
-        cliente.id === id 
-          ? { 
-              ...cliente, 
-              fechaFin: nuevaFechaFinString
-            } 
+      setClients(prev => prev.map(cliente =>
+        cliente.id === id
+          ? {
+            ...cliente,
+            fechaFin: nuevaFechaFinString
+          }
           : cliente
       ))
-      
-      return { 
-        success: true, 
+
+      return {
+        success: true,
         message: `Suscripción extendida ${meses} mes(es) desde la última fecha`,
         nuevaFechaFin: nuevaFechaFinString
       }
     } catch (error) {
       console.error("Error al extender suscripción:", error)
       setError(error.message || "Error al extender la suscripción")
-      
-      return { 
-        success: false, 
-        message: error.message || "Error al extender la suscripción" 
+
+      return {
+        success: false,
+        message: error.message || "Error al extender la suscripción"
       }
     } finally {
       setLoading(false)
     }
+  }
+
+  // Función simple para checkear estado (sin async)
+  const getEstadoSuscripcion = (fechaFinString) => {
+    if (!fechaFinString) return 'normal'
+
+    // Crear fechas asegurando que sean objetos Date válidos
+    const hoy = new Date()
+    // Normalizar hoy al inicio del día para comparaciones más precisas
+    hoy.setHours(0, 0, 0, 0)
+
+    const fechaFin = new Date(fechaFinString)
+    // Normalizar fecha fin (asumiendo que viene como YYYY-MM-DD, esto le da hora 00:00 UTC, 
+    // pero al convertir a local puede variar. Mejor tratar como string fecha puro o ajustar zona horaria
+    // Para simplificar, comparamos timestamps de días
+
+    if (isNaN(fechaFin.getTime())) return 'normal'
+
+    // Ajustar fecha fin para que sea inclusiva (fin del día) o inicio
+    // Para simplificar: calculamos diferencia en días
+    const diffTime = fechaFin - hoy
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+
+    if (diffDays < 0) return 'vencido'
+    if (diffDays <= 5) return 'por-vencer'
+    return 'normal'
   }
 
   return (
@@ -373,18 +399,19 @@ export const ClientProvider = ({ children }) => {
         clients,
         loading,
         error,
-        
+
         // Funciones CRUD
         getClients,
         agregarCliente,
         actualizarCliente,
         eliminarCliente,
-        
+
         // Funciones adicionales
         getClienteById,
         buscarClientes,
         extenderSuscripcion,
-        extenderDesdeUltimaFecha
+        extenderDesdeUltimaFecha,
+        getEstadoSuscripcion
       }}
     >
       {children}
