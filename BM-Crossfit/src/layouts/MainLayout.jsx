@@ -1,32 +1,52 @@
 // En tu componente principal (por ejemplo, Dashboard.jsx o App.jsx)
-import { useState } from 'react'
+import { useState, useContext, useMemo } from 'react'
+import { ClientContext } from '../context/ClientContext'
 import Functions from '../components/Functions/Functions'
 import Table from '../components/Table/Table'
 import Navbar from '../components/Navbar/Navbar'
 import StatsCards from '../components/StatsCards/StatsCards'
 
 const Dashboard = () => {
+  const { clients, getEstadoSuscripcion } = useContext(ClientContext)
   const [terminoBusqueda, setTerminoBusqueda] = useState("")
-  const [estaBuscando, setEstaBuscando] = useState(false)
-  const [clientesFiltrados, setClientesFiltrados] = useState([])
+  const [filtroEstado, setFiltroEstado] = useState("todos")
 
-  const handleSearchUpdate = (data) => {
-    setTerminoBusqueda(data.terminoBusqueda)
-    setEstaBuscando(data.estaBuscando)
-    setClientesFiltrados(data.clientesFiltrados)
+  // Lógica de filtrado centralizada
+  const clientesFiltrados = useMemo(() => {
+    let result = clients
+
+    // 1. Filtrar por estado
+    if (filtroEstado !== 'todos') {
+      result = result.filter(cliente => {
+        const estado = getEstadoSuscripcion(cliente.fechaFin)
+        if (filtroEstado === 'activos') return estado === 'normal'
+        if (filtroEstado === 'por-vencer') return estado === 'por-vencer'
+        if (filtroEstado === 'vencidos') return estado === 'vencido'
+        return true
+      })
+    }
+
+    // 2. Filtrar por término de búsqueda
+    if (terminoBusqueda && terminoBusqueda.length >= 3) {
+      const terminoLower = terminoBusqueda.toLowerCase()
+      result = result.filter(cliente =>
+        cliente.nombre?.toLowerCase().includes(terminoLower) ||
+        cliente.apellido?.toLowerCase().includes(terminoLower) ||
+        cliente.dni?.includes(terminoBusqueda) ||
+        cliente.disciplina?.toLowerCase().includes(terminoLower) ||
+        `${cliente.nombre || ''} ${cliente.apellido || ''}`.toLowerCase().includes(terminoLower)
+      )
+    }
+
+    return result
+  }, [clients, terminoBusqueda, filtroEstado, getEstadoSuscripcion])
+
+  const handleSearchUpdate = (nuevoTermino) => {
+    setTerminoBusqueda(nuevoTermino)
   }
 
-  const handleBuscar = (termino) => {
-    // Tu lógica de búsqueda aquí
-    setTerminoBusqueda(termino)
-    // ... filtrar clientes y setClientesFiltrados
-    setEstaBuscando(true)
-  }
-
-  const handleLimpiarBusqueda = () => {
-    setTerminoBusqueda("")
-    setEstaBuscando(false)
-    setClientesFiltrados([])
+  const handleFilterChange = (nuevoFiltro) => {
+    setFiltroEstado(nuevoFiltro)
   }
 
   return (
@@ -34,15 +54,20 @@ const Dashboard = () => {
       <Navbar />
 
       <div className="content">
-        <StatsCards />
+        <StatsCards
+          onFilterChange={handleFilterChange}
+          selectedFilter={filtroEstado}
+        />
 
         <Functions
           onSearchUpdate={handleSearchUpdate}
+          filtroEstado={filtroEstado}
+          onFilterChange={handleFilterChange}
         />
 
         <Table
           terminoBusqueda={terminoBusqueda}
-          estaBuscando={estaBuscando}
+          estaBuscando={terminoBusqueda.length >= 3 || filtroEstado !== 'todos'}
           clientesFiltrados={clientesFiltrados}
         />
       </div>

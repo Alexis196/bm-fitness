@@ -3,73 +3,25 @@ import React, { useState, useContext, useCallback } from 'react'
 import { ClientContext } from '../../context/ClientContext'
 import AddClient from '../AddClient/AddClient'
 import Search from '../Search/Search'
-import { FaUserPlus } from "react-icons/fa"
+// Importar iconos y componente Rutinas
+import { FaUserPlus, FaDumbbell } from "react-icons/fa"
+import RoutineManager from '../Routines/RoutineManager'
 import './Functions.css'
 
-const Functions = ({ onSearchUpdate }) => {
-    const { clients } = useContext(ClientContext)
+const Functions = ({ onSearchUpdate, filtroEstado, onFilterChange }) => {
     const [showModal, setShowModal] = useState(false)
-    const [terminoBusqueda, setTerminoBusqueda] = useState("")
-    const [estaBuscando, setEstaBuscando] = useState(false)
-    const [clientesFiltrados, setClientesFiltrados] = useState([])
+    const [showRoutines, setShowRoutines] = useState(false) // Nuevo estado
 
+    // Solo pasamos el texto al padre
     const buscarClientes = useCallback((termino) => {
-        if (!termino || termino.length < 3) {
-            setEstaBuscando(false)
-            setClientesFiltrados([])
-            setTerminoBusqueda("")
-
-            // Notificar al padre que se limpió la búsqueda
-            if (onSearchUpdate) {
-                onSearchUpdate({
-                    terminoBusqueda: "",
-                    estaBuscando: false,
-                    clientesFiltrados: []
-                })
-            }
-            return
-        }
-
-        const terminoLower = termino.toLowerCase().trim()
-
-        // Filtrar clientes
-        const filtrados = clients.filter(cliente => {
-            if (cliente.nombre?.toLowerCase().includes(terminoLower)) return true
-            if (cliente.apellido?.toLowerCase().includes(terminoLower)) return true
-            if (cliente.dni?.toString().includes(termino)) return true
-            if (cliente.disciplina?.toLowerCase().includes(terminoLower)) return true
-
-            const nombreCompleto = `${cliente.nombre || ''} ${cliente.apellido || ''}`.toLowerCase()
-            return nombreCompleto.includes(terminoLower)
-        })
-
-        // Actualizar estados locales
-        setTerminoBusqueda(termino)
-        setClientesFiltrados(filtrados)
-        setEstaBuscando(true)
-
-        // Notificar al padre sobre los resultados
         if (onSearchUpdate) {
-            onSearchUpdate({
-                terminoBusqueda: termino,
-                estaBuscando: true,
-                clientesFiltrados: filtrados
-            })
+            onSearchUpdate(termino)
         }
-    }, [clients, onSearchUpdate])
+    }, [onSearchUpdate])
 
     const limpiarBusqueda = useCallback(() => {
-        setTerminoBusqueda("")
-        setEstaBuscando(false)
-        setClientesFiltrados([])
-
-        // Notificar al padre que se limpió la búsqueda
         if (onSearchUpdate) {
-            onSearchUpdate({
-                terminoBusqueda: "",
-                estaBuscando: false,
-                clientesFiltrados: []
-            })
+            onSearchUpdate("")
         }
     }, [onSearchUpdate])
 
@@ -89,19 +41,32 @@ const Functions = ({ onSearchUpdate }) => {
     return (
         <div className="functions-container">
             <div className="functions-header">
-                <button
-                    className="btn-add-client"
-                    onClick={handleOpenModal}
-                    title="Agregar Nuevo Cliente"
-                >
-                    <FaUserPlus size={24} />
-                </button>
+                <div className="action-buttons" style={{ display: 'flex', gap: '1rem' }}>
+                    <button
+                        className="btn-add-client"
+                        onClick={handleOpenModal}
+                        title="Agregar Nuevo Cliente"
+                    >
+                        <FaUserPlus size={20} />
+                        <span style={{ backgroundColor: 'transparent' }}>Agregar Cliente</span>
+                    </button>
+
+                    <button
+                        className="btn-add-client" // Reusamos clase para estilo consistente
+                        onClick={() => setShowRoutines(true)}
+                        title="Gestionar Rutinas"
+                        style={{ backgroundColor: '#475569' }} // Diferenciar color
+                    >
+                        <FaDumbbell size={20} />
+                        <span style={{ backgroundColor: 'transparent' }}>Rutinas</span>
+                    </button>
+                </div>
 
                 <Search
                     onBuscar={buscarClientes}
                     onLimpiar={limpiarBusqueda}
-                    estaBuscando={estaBuscando}
-                    totalResultados={clientesFiltrados.length}
+                    filtroEstado={filtroEstado}
+                    onFilterChange={onFilterChange}
                 />
             </div>
 
@@ -123,6 +88,19 @@ const Functions = ({ onSearchUpdate }) => {
                                 onClose={handleCloseModal}
                             />
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Modal de Rutinas (Pantalla completa o grande) */}
+            {showRoutines && (
+                <div className="modal-overlay" onClick={() => setShowRoutines(false)}>
+                    <div
+                        className="modal-content"
+                        onClick={(e) => e.stopPropagation()}
+                        style={{ width: '95%', maxWidth: '1200px', height: '90vh' }}
+                    >
+                        <RoutineManager onClose={() => setShowRoutines(false)} />
                     </div>
                 </div>
             )}

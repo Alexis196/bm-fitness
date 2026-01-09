@@ -1,77 +1,103 @@
-/* components/Buscador/Buscador.css */
 .barra-busqueda {
-  margin-bottom: 20px;
-  padding: 15px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  border: 1px solid #e9ecef;
+  flex: 1;
+  min-width: 0;
 }
 
 .buscador-container {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  position: relative;
-  /* Needed for absolute positioning context */
+  gap: 0.75rem;
+  align-items: center;
 }
 
-/* ... existing styles ... */
-
-.info-busqueda {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
-  z-index: 20;
-  margin-top: 5px;
-  pointer-events: none;
-  /* Let clicks pass through when hidden/empty */
-}
-
-/* When there is content (span), give it style */
-.info-busqueda span {
-  display: block;
-  padding: 10px 15px;
-  background-color: #1a2634;
-  /* Dark bg */
-  border: 1px solid rgba(255, 255, 255, 0.1);
+.filtro-estado {
+  padding: 0.6rem 2rem 0.6rem 1rem;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  pointer-events: auto;
-  /* Enable clicks on the message itself */
-  backdrop-filter: blur(10px);
+  background-color: #f8fafc;
+  color: #475569;
+  font-size: 0.9rem;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.7rem center;
+  min-width: 160px;
 }
 
-.mensaje-ayuda {
-  color: #fbbf24;
-  /* Amber-400 */
-  font-size: 0.9rem;
-  font-weight: 500;
+.filtro-estado:hover {
+  border-color: #cbd5e1;
+  background-color: white;
 }
 
-.resultados-busqueda {
-  color: #4ade80;
-  /* Green-400 */
-  font-weight: 500;
-  font-size: 0.9rem;
+.filtro-estado:focus {
+  border-color: #3b82f6;
+  ring: 2px solid rgba(59, 130, 246, 0.1);
+}
+
+.buscador-input-wrapper {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.icono-busqueda {
+  position: absolute;
+  left: 1rem;
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.buscador-input {
+  width: 100%;
+  padding: 0.6rem 1rem 0.6rem 2.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: #1e293b;
+  background-color: #f8fafc;
+  transition: all 0.2s;
+}
+
+.buscador-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background-color: white;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.buscador-input::placeholder {
+  color: #94a3b8;
+}
+
+.boton-limpiar-busqueda {
+  position: absolute;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  padding: 0.25rem;
+  cursor: pointer;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.boton-limpiar-busqueda:hover {
+  background-color: #f1f5f9;
+  color: #64748b;
 }
 
 @media (max-width: 768px) {
-  .barra-busqueda {
-    padding: 10px;
+  .buscador-container {
+    flex-direction: column;
+    align-items: stretch;
   }
 
-  .buscador-input {
-    padding: 10px 36px 10px 36px;
-    font-size: 14px;
-  }
-
-  .buscador-input::placeholder {
-    font-size: 14px;
-  }
-
-  .resultados-busqueda,
-  .mensaje-ayuda {
-    font-size: 0.85rem;
+  .filtro-estado {
+    width: 100%;
   }
 }

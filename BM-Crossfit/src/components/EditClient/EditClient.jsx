@@ -148,10 +148,6 @@ const EditClient = ({ client, onSuccess, onClose }) => {
                             <option value="Musculación">Musculación</option>
                             <option value="Crossfit">Crossfit</option>
                             <option value="Funcional">Funcional</option>
-                            <option value="Yoga">Yoga</option>
-                            <option value="Pilates">Pilates</option>
-                            <option value="Spinning">Spinning</option>
-                            <option value="Boxeo">Boxeo</option>
                         </select>
                     </div>
                 </div>

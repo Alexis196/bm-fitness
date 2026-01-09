@@ -3,7 +3,7 @@ import { ClientContext } from '../../context/ClientContext'
 import './StatsCards.css'
 import { FaUsers, FaUserCheck, FaUserClock, FaUserTimes } from 'react-icons/fa'
 
-const StatsCards = () => {
+const StatsCards = ({ onFilterChange, selectedFilter }) => {
     const { clients, getEstadoSuscripcion } = useContext(ClientContext)
 
     const stats = useMemo(() => {
@@ -28,7 +28,11 @@ const StatsCards = () => {
 
     return (
         <div className="stats-container">
-            <div className="stat-card total">
+            <div
+                className={`stat-card total ${selectedFilter === 'todos' ? 'selected' : ''}`}
+                onClick={() => onFilterChange('todos')}
+                style={{ cursor: 'pointer', border: selectedFilter === 'todos' ? '1px solid #fff' : '1px solid transparent' }}
+            >
                 <div className="stat-icon">
                     <FaUsers />
                 </div>
@@ -38,7 +42,11 @@ const StatsCards = () => {
                 </div>
             </div>
 
-            <div className="stat-card active">
+            <div
+                className={`stat-card active ${selectedFilter === 'activos' ? 'selected' : ''}`}
+                onClick={() => onFilterChange('activos')}
+                style={{ cursor: 'pointer', border: selectedFilter === 'activos' ? '1px solid #fff' : '2px solid transparent' }}
+            >
                 <div className="stat-icon">
                     <FaUserCheck />
                 </div>
@@ -48,7 +56,11 @@ const StatsCards = () => {
                 </div>
             </div>
 
-            <div className="stat-card warning">
+            <div
+                className={`stat-card warning ${selectedFilter === 'por-vencer' ? 'selected' : ''}`}
+                onClick={() => onFilterChange('por-vencer')}
+                style={{ cursor: 'pointer', border: selectedFilter === 'por-vencer' ? '1px solid #fff' : '2px solid transparent' }}
+            >
                 <div className="stat-icon">
                     <FaUserClock />
                 </div>
@@ -58,7 +70,11 @@ const StatsCards = () => {
                 </div>
             </div>
 
-            <div className="stat-card expired">
+            <div
+                className={`stat-card expired ${selectedFilter === 'vencidos' ? 'selected' : ''}`}
+                onClick={() => onFilterChange('vencidos')}
+                style={{ cursor: 'pointer', border: selectedFilter === 'vencidos' ? '1px solid #fff' : '2px solid transparent' }}
+            >
                 <div className="stat-icon">
                     <FaUserTimes />
                 </div>

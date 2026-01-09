@@ -4,12 +4,21 @@ import './AddClient.css'
 
 const AddClient = ({ onSuccess, onClose }) => {
     const { agregarCliente } = useContext(ClientContext)
+    // Función auxiliar para obtener fecha actual (YYYY-MM-DD)
+    const getTodayDate = () => {
+        const today = new Date()
+        const year = today.getFullYear()
+        const month = String(today.getMonth() + 1).padStart(2, '0')
+        const day = String(today.getDate()).padStart(2, '0')
+        return `${year}-${month}-${day}`
+    }
+
     const [formData, setFormData] = useState({
         nombre: '',
         apellido: '',
         dni: '',
         disciplina: '',
-        fechaInicio: '',
+        fechaInicio: getTodayDate(),
         fechaFin: ''
     })
     const [loading, setLoading] = useState(false)
@@ -66,15 +75,15 @@ const AddClient = ({ onSuccess, onClose }) => {
                 apellido: '',
                 dni: '',
                 disciplina: '',
-                fechaInicio: '',
+                fechaInicio: getTodayDate(),
                 fechaFin: ''
             })
-            
+
             // Notificar al componente padre
             if (onSuccess) {
                 onSuccess(resultado)
             }
-            
+
             // Cerrar modal automáticamente después de éxito
             if (onClose) {
                 onClose()
@@ -82,7 +91,7 @@ const AddClient = ({ onSuccess, onClose }) => {
         } else {
             alert(`Error: ${resultado.message}`)
         }
-        
+
         setLoading(false)
     }
 
@@ -92,7 +101,7 @@ const AddClient = ({ onSuccess, onClose }) => {
             apellido: '',
             dni: '',
             disciplina: '',
-            fechaInicio: '',
+            fechaInicio: getTodayDate(),
             fechaFin: ''
         })
     }
@@ -108,7 +117,7 @@ const AddClient = ({ onSuccess, onClose }) => {
             <form onSubmit={handleSubmit} className="cliente-form">
                 <div className="form-row">
                     <div className="form-group">
-                        <label htmlFor="nombre">Nombre *</label>
+                        <label htmlFor="nombre">Nombre <span style={{ color: '#ff0000' }}>*</span></label>
                         <input
                             type="text"
                             id="nombre"
@@ -122,7 +131,7 @@ const AddClient = ({ onSuccess, onClose }) => {
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="apellido">Apellido *</label>
+                        <label htmlFor="apellido">Apellido <span style={{ color: '#ff0000' }}>*</span></label>
                         <input
                             type="text"
                             id="apellido"
@@ -138,7 +147,7 @@ const AddClient = ({ onSuccess, onClose }) => {
 
                 <div className="form-row">
                     <div className="form-group">
-                        <label htmlFor="dni">DNI *</label>
+                        <label htmlFor="dni">DNI <span style={{ color: '#ff0000' }}>*</span></label>
                         <input
                             type="text"
                             id="dni"
@@ -154,7 +163,7 @@ const AddClient = ({ onSuccess, onClose }) => {
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="disciplina">Disciplina</label>
+                        <label htmlFor="disciplina">Disciplina <span style={{ color: '#ff0000' }}>*</span></label>
                         <select
                             id="disciplina"
                             name="disciplina"
@@ -166,17 +175,13 @@ const AddClient = ({ onSuccess, onClose }) => {
                             <option value="Musculación">Musculación</option>
                             <option value="Crossfit">Crossfit</option>
                             <option value="Funcional">Funcional</option>
-                            <option value="Yoga">Yoga</option>
-                            <option value="Pilates">Pilates</option>
-                            <option value="Spinning">Spinning</option>
-                            <option value="Boxeo">Boxeo</option>
                         </select>
                     </div>
                 </div>
 
                 <div className="form-row">
                     <div className="form-group">
-                        <label htmlFor="fechaInicio">Fecha de Inicio</label>
+                        <label htmlFor="fechaInicio">Fecha de Inicio <span style={{ color: '#ff0000' }}>*</span></label>
                         <input
                             type="date"
                             id="fechaInicio"
@@ -202,8 +207,8 @@ const AddClient = ({ onSuccess, onClose }) => {
                 </div>
 
                 <div className="form-actions">
-                    <button 
-                        type="submit" 
+                    <button
+                        type="submit"
                         className="btn-submit"
                         disabled={loading}
                     >

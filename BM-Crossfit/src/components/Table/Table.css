@@ -260,11 +260,11 @@
 }
 
 /* Ajustes para la tabla con paginación */
-.table-container {
+/* .table-container {
   overflow-x: auto;
   max-height: 640px;
   overflow-y: auto;
-}
+} */
 
 /* Scrollbar personalizado - Thin and Dark */
 .table-container {
@@ -414,17 +414,14 @@
 
 /* Barra de búsqueda */
 .barra-busqueda {
-  margin-bottom: 20px;
   padding: 15px;
-  background-color: rgba(255, 255, 255, 0.05);
-  /* Very light glass */
+  background-color: transparent;
   border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .buscador-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 10px;
 }
 
