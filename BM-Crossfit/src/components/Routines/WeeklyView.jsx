@@ -1,8 +1,9 @@
 import React, { useContext, useState } from 'react'
 import { RoutineContext } from '../../context/RoutineContext'
 import ConfirmationModal from './ConfirmationModal'
-import { FaPlus, FaTrash } from 'react-icons/fa'
+import { FaPlus, FaTrash, FaChevronDown, FaChevronUp } from 'react-icons/fa'
 import './Routines.css'
+import NotificationModal from './NotificationModal'
 
 const WeeklyView = () => {
     const {
@@ -20,6 +21,7 @@ const WeeklyView = () => {
     const [selectedDay, setSelectedDay] = useState(null)
     const [selectedExerciseId, setSelectedExerciseId] = useState('')
     const [showDeleteModal, setShowDeleteModal] = useState(false)
+
     const [expandedItem, setExpandedItem] = useState(null)
 
 
@@ -54,13 +56,34 @@ const WeeklyView = () => {
         }
     }
 
+    const [notification, setNotification] = useState({
+        isOpen: false,
+        type: 'success',
+        title: '',
+        message: ''
+    })
+
     const handleSave = async () => {
         const result = await saveRoutine()
         if (result.success) {
-            alert('Rutina guardada correctamente')
+            setNotification({
+                isOpen: true,
+                type: 'success',
+                title: '¡Éxito!',
+                message: 'Rutina guardada correctamente'
+            })
         } else {
-            alert('Error al guardar: ' + result.error)
+            setNotification({
+                isOpen: true,
+                type: 'error',
+                title: 'Error',
+                message: 'Error al guardar: ' + result.error
+            })
         }
+    }
+
+    const closeNotification = () => {
+        setNotification(prev => ({ ...prev, isOpen: false }))
     }
 
     const handleDeleteClick = () => {
@@ -204,10 +227,10 @@ const WeeklyView = () => {
                                                 className="routine-item-header"
                                                 onClick={() => toggleExpand(day, idx)}
                                             >
-                                                <strong>{ex.nombre}</strong>
-                                                <span className="expand-icon">
-                                                    {isExpanded ? '−' : '+'}
-                                                </span>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                                    {isExpanded ? <FaChevronUp size={12} color="#94a3b8" /> : <FaChevronDown size={12} color="#94a3b8" />}
+                                                    <strong>{ex.nombre}</strong>
+                                                </div>
                                             </div>
 
                                             {isExpanded && (
@@ -269,8 +292,9 @@ const WeeklyView = () => {
                                                 e.stopPropagation()
                                                 handleRemoveExercise(day, idx)
                                             }}
+                                            title="Eliminar ejercicio"
                                         >
-                                            &times;
+                                            <FaTrash size={14} />
                                         </button>
                                     </div>
                                 )
@@ -315,6 +339,14 @@ const WeeklyView = () => {
                 onConfirm={handleConfirmDelete}
                 title="Eliminar Rutina"
                 message={`¿Estás seguro que deseas eliminar la rutina "${currentRoutine.nombre}"? Esta acción no se puede deshacer.`}
+            />
+
+            <NotificationModal
+                isOpen={notification.isOpen}
+                onClose={closeNotification}
+                type={notification.type}
+                title={notification.title}
+                message={notification.message}
             />
         </div >
     )

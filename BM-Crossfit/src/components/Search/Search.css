@@ -10,7 +10,7 @@
 }
 
 .filtro-estado {
-  padding: 0.6rem 2rem 0.6rem 1rem;
+  padding: 0.6rem 1.5rem 0.6rem 1rem;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   background-color: #f8fafc;
@@ -22,8 +22,8 @@
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 0.7rem center;
-  min-width: 160px;
+  background-position: right 0.5rem center;
+  min-width: 130px;
 }
 
 .filtro-estado:hover {
@@ -93,11 +93,14 @@
 
 @media (max-width: 768px) {
   .buscador-container {
-    flex-direction: column;
-    align-items: stretch;
+    /* Maintain row layout but maybe adjust gap */
+    gap: 0.5rem;
   }
 
+  /* Remove width: 100% to let it shrink to min-width */
   .filtro-estado {
-    width: 100%;
+    width: auto;
+    flex-shrink: 0;
+    /* Prevent shrinking below content/min-width */
   }
 }

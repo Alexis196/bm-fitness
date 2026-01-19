@@ -443,6 +443,71 @@
     border-radius: 3px;
 }
 
-.input-group span {
+.routine-inputs span {
     color: #fff;
+}
+
+/* Responsive Styles for Routines */
+@media (max-width: 768px) {
+    .routine-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        position: relative;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+
+    .routine-tabs {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+    }
+
+    .routine-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .toolbar-actions {
+        margin-top: 1rem;
+        justify-content: flex-end;
+    }
+
+    .week-grid {
+        display: flex;
+        flex-direction: column;
+        min-width: auto;
+    }
+
+    .day-column {
+        min-height: 200px;
+    }
+
+    .add-exercise-form {
+        flex-direction: column;
+    }
+
+    .exercise-input {
+        width: 100%;
+    }
+
+    .add-btn {
+        padding: 0.8rem;
+        justify-content: center;
+    }
+
+    .mini-modal {
+        width: 90%;
+        max-width: 300px;
+    }
+}
+
+@media (max-width: 1024px) {
+    /* Keep the tablet horizontal scroll if preferred, or override above */
+    /* .week-grid { min-width: 800px; } -- Removing this to favor the vertical stack on mobile/tablet or just mobile */
 }
