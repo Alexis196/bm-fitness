@@ -447,7 +447,6 @@
   transition: all 0.3s ease;
   outline: none;
   background-color: #1a2634;
-  color: white;
 }
 
 .buscador-input:focus {
