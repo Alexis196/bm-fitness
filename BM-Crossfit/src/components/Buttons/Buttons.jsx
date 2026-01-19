@@ -3,7 +3,7 @@ import React, { useState, useContext } from 'react'
 import { createPortal } from 'react-dom'
 import { ClientContext } from '../../context/ClientContext'
 import './Buttons.css'
-import { FaEdit, FaTrash } from 'react-icons/fa'
+import { FaEdit, FaTrash, FaCalendarPlus } from 'react-icons/fa'
 import EditClient from '../EditClient/EditClient'
 
 const Buttons = ({ client, onClientUpdated }) => {
@@ -73,7 +73,8 @@ const Buttons = ({ client, onClientUpdated }) => {
                     disabled={loading}
                     title="Editar cliente"
                 >
-                    <i className="btn-icon"><FaEdit /></i>
+                    <FaEdit />
+                    <span className="btn-label">Editar</span>
                 </button>
                 <button
                     className="btn btn-extend"
@@ -81,7 +82,8 @@ const Buttons = ({ client, onClientUpdated }) => {
                     disabled={loading}
                     title="Extender 1 mes"
                 >
-                    <i className="btn-icon">+1 Mes</i>
+                    <FaCalendarPlus />
+                    <span className="btn-label">+1 Mes</span>
                 </button>
                 <button
                     className="btn btn-delete"
@@ -89,7 +91,8 @@ const Buttons = ({ client, onClientUpdated }) => {
                     disabled={loading}
                     title="Eliminar cliente"
                 >
-                    <i className="btn-icon"><FaTrash /></i>
+                    <FaTrash />
+                    <span className="btn-label">Eliminar</span>
                 </button>
             </div>
 

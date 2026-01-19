@@ -1,9 +1,8 @@
 .table-container {
   width: 90%;
   margin: 0 auto;
-  /* Center horizontally */
   background: transparent;
-  /* Changed from white to transparent to let main bg show or use specific card color */
+  /* overflow-x: auto; Removed as per user request */
 }
 
 .table {
@@ -68,8 +67,34 @@
   padding: 16px 12px;
   font-size: 14px;
   color: #e2e8f0;
-  /* Very light gray/white */
   border: none;
+  vertical-align: middle;
+}
+
+/* Responsive Table Adjustment for Mid-size screens */
+@media (max-width: 1200px) {
+  .table td {
+    padding: 12px 6px;
+    /* Reduce padding */
+    font-size: 13px;
+    /* Slightly smaller font */
+  }
+
+  .table th {
+    padding: 12px 6px;
+    font-size: 12px;
+  }
+}
+
+/* Prevent date wrapping */
+.table td:nth-child(6),
+.table td:nth-child(7) {
+  white-space: nowrap;
+}
+
+/* Actions column width fix */
+.table td:last-child {
+  min-width: 140px;
 }
 
 /* Estilos para filas según estado */

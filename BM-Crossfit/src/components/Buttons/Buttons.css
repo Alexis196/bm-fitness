@@ -20,6 +20,8 @@
   justify-content: center;
   min-width: 40px;
   height: 40px;
+  gap: 8px;
+  /* Add gap globally for icon + label */
 }
 
 /* ... (colors remain same but can be tweaked if needed, keeping simple matching for now) ... */
@@ -48,4 +50,31 @@
     /* Keep row even on smaller screens if possible, or wrap */
     flex-wrap: wrap;
   }
+}
+
+.btn-label {
+  display: inline-block;
+  font-size: 0.9rem;
+  background-color: transparent;
+}
+
+/* Mobile/Tablet Card View Styles (< 920px matching Table.css) */
+@media (max-width: 920px) {
+  .buttons-container {
+    width: 100%;
+    gap: 10px;
+  }
+
+  .btn {
+    flex: 1;
+    /* Equal width for all buttons */
+    padding: 10px;
+    height: auto;
+    /* Adjust height */
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  /* .btn-label styles inherited from global */
 }
